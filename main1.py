@@ -39,7 +39,8 @@ class FileGuard:
         except Exception as e:
             print(f"[!] alert: error -[{e}]")
 
-
+    def send_alert_to_server(self,data):
+        pass
     def monitor(self):
         print(f"[*] Monitoring{self.file_path}",end='\r')
         while True:
