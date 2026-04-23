@@ -1,23 +1,22 @@
 import hashlib
 # import datetime
 import atexit as saviour
-# import socket as sock
+import socket as sock
 import time 
-# import os 
-# import flask_socketio 
-import psycopg 
-# import numpy as np
-db_info = "dbname=soc_dashboard user=shivansh password=aftermeth host=localhost"
-
+import json as j
 class FileGuard:
+    ip = '127.0.0.1'
+    port = 5555
+    addr = (ip,port)
     def __init__(self,file_path):
         self.file_path = file_path##location  of the file assingned to watched
         self.baseline = self.calculate_hash()
-        self.conn =  psycopg.connect(db_info)
-        saviour.register(self.conn.close)
         if(self.baseline):
             print(f"baseline establised for : {self.file_path}")
             print(f"current fingerprint {self.baseline}\n")
+        self.client_socket = sock.socket(sock.AF_INET,sock.SOCK_STREAM)
+        self.client_socket.connect(self.addr)
+        saviour.register(self.client_socket.close)
     def calculate_hash(self):
         sha_256_hash = hashlib.sha256()
         try:
@@ -28,19 +27,21 @@ class FileGuard:
         except FileNotFoundError:
             print(f"[!] Error! file path - {self.file_path} not found!\n")
             return None
-    def log_to_db(self,event_type,fingerprint,details,sevirity,file_path):
-        sql = """INSERT INTO alerts(event_type,sevirety,details,file_path,hash_value)
-                VALUES (%s,%s,%s,%s,%s)"""
-        data = (event_type,sevirity,details,file_path,fingerprint)
-        try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql,data)
-                self.conn.commit()
-        except Exception as e:
-            print(f"[!] alert: error -[{e}]")
 
-    def send_alert_to_server(self,data):
-        pass
+    def send_alert_to_server(self,event_type,re_calc,details,sevirity,file_path):
+        pack = {
+            "event_type":event_type,
+            'severity':sevirity,
+            'details':details,
+            "timestamp":time.ctime(),
+            'file_path':file_path,
+            'hash':re_calc
+        }
+        try:
+            s = j.dumps(pack).encode('utf-8')
+            self.client_socket.send(s)
+        except Exception as e:
+            print(f"[ERROR!] {e}")         
     def monitor(self):
         print(f"[*] Monitoring{self.file_path}",end='\r')
         while True:
@@ -49,20 +50,23 @@ class FileGuard:
                 re_calc = self.calculate_hash()
                 if(re_calc != self.baseline):
                     print("[change is detected..]\n[logging it..]")
-                    self.log_to_db("MODIFICATION",re_calc,'File Was Changed','CRITICAL',f"{self.file_path}")
+                    self.send_alert_to_server("MODIFICATION",re_calc,'File Was Changed','CRITICAL',f"{self.file_path}")
                     self.baseline = re_calc
                    
                 else:
                     print("checking.....[Status: Secure] [ok]",end='\r')         
             except FileNotFoundError:
                 print(f"\n[CRITICAL] Alert: {self.file_path} has been Deleted!")
-                self.log_to_db("DELETION",None,'File is Removed!','ALERT',f'{self.file_path}')
+                self.send_alert_to_server("DELETION",None,'File is Removed!','ALERT',f'{self.file_path}')
             except PermissionError:
                 print(f"\n[WARNING] Alert: Access is Denied! to {self.file_path}")
-                self.log_to_db("PERMISSION_DENIED",None,'System Blocked Access!',"ALERT",f'{self.file_path}')
+                self.send_alert_to_server("PERMISSION_DENIED",None,'System Blocked Access!',"ALERT",f'{self.file_path}')
             except KeyboardInterrupt:
                 print("[+]file guard shout down!")
                 break
             except Exception as e:
                 print(f'[EXCEPTION] Alert: error - {e}')
-                self.log_to_db("SYSTEM-ERROR",None,f'{e}','EMERGENCY',f"{self.file_path}")
+                self.send_alert_to_server("SYSTEM-ERROR",None,f'{e}','EMERGENCY',f"{self.file_path}")
+path_to_check = "abc.txt"
+guard = FileGuard(path_to_check)
+guard.monitor()
