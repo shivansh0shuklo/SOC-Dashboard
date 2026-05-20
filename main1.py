@@ -43,30 +43,23 @@ class FileGuard:
         except Exception as e:
             print(f"[ERROR!] {e}")         
     def monitor(self):
-        print(f"[*] Monitoring{self.file_path}",end='\r')
+        print(f"[*] Monitoring {self.file_path}", end='\r')
         while True:
             try:
                 time.sleep(3)
                 re_calc = self.calculate_hash()
-                if(re_calc != self.baseline):
+                if re_calc is None:
+                    raise FileNotFoundError
+                if re_calc != self.baseline:
                     print("[change is detected..]\n[logging it..]")
-                    self.send_alert_to_server("MODIFICATION",re_calc,'File Was Changed','CRITICAL',f"{self.file_path}")
+                    self.send_alert_to_server("MODIFICATION", re_calc, 'File Was Changed', 'CRITICAL', f"{self.file_path}")
                     self.baseline = re_calc
-                   
                 else:
-                    print("checking.....[Status: Secure] [ok]",end='\r')         
+                    print("checking.....[Status: Secure] [ok]", end='\r')   
             except FileNotFoundError:
                 print(f"\n[CRITICAL] Alert: {self.file_path} has been Deleted!")
-                self.send_alert_to_server("DELETION",None,'File is Removed!','ALERT',f'{self.file_path}')
-            except PermissionError:
-                print(f"\n[WARNING] Alert: Access is Denied! to {self.file_path}")
-                self.send_alert_to_server("PERMISSION_DENIED",None,'System Blocked Access!',"ALERT",f'{self.file_path}')
-            except KeyboardInterrupt:
-                print("[+]file guard shout down!")
-                break
-            except Exception as e:
-                print(f'[EXCEPTION] Alert: error - {e}')
-                self.send_alert_to_server("SYSTEM-ERROR",None,f'{e}','EMERGENCY',f"{self.file_path}")
+                self.send_alert_to_server("DELETION", None, 'File is Removed!', 'CRITICAL', f'{self.file_path}')
+                self.baseline = None
 path_to_check = "abc.txt"
 guard = FileGuard(path_to_check)
 guard.monitor()

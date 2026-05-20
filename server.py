@@ -25,21 +25,13 @@ def handel_client(conn,addr):
                     curr.execute("""
                         INSERT INTO alerts(event_type, sevirity, details, created_at, file_path, hash_value) 
                         VALUES (%s, %s, %s, %s, %s, %s)
-                    """,(
-                        data['event_type'], 
-                        data['severity'],
-                        data['details'], 
-                        data['timestamp'], 
-                        data['file_path'], 
-                        data['hash']
-                    ))
+                    """,(data['event_type'],data['severity'],data['details'],data['timestamp'],data['file_path'],data['hash']))
                     connect.commit()
     except Exception as e:
         print(f"[error] {e}")
     finally:
         conn.close()
         
-
 def start():
     server.listen()
     print(f'[Listening]..to [{PORT}]')

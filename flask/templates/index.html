@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FileGuard SOC Dashboard</title>
+    <style>
+        body { 
+            background-color: #0f141c; 
+            color: #e1e6f0; 
+            font-family: 'Courier New', Courier, monospace; 
+            padding: 30px; 
+        }
+        h1 { 
+            color: #00ffcc; 
+            border-bottom: 2px solid #00ffcc; 
+            padding-bottom: 10px; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid #233044; 
+        }
+        th { 
+            background-color: #1a2333; 
+            color: #00ffcc; 
+        }
+        tr:nth-child(even) { 
+            background-color: #141b27; 
+        }
+        tr:hover { 
+            background-color: #1c2638; 
+        }
+        /* Dynamic styling classes based on security severity names */
+        .CRITICAL { color: #ff3333; font-weight: bold; }
+        .ALERT { color: #ffaa00; }
+        .INFO { color: #00aaff; }
+    </style>
+</head>
+<body>
+
+    <h1>🛡️ FileGuard: Security Operations Center (SOC)</h1>
+    <p>Real-time File Integrity Monitoring Logs</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Event Type</th>
+                <th>Severity</th>
+                <th>Details</th>
+                <th>Timestamp</th>
+                <th>File Path</th>
+                <th>SHA-256 Hash</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alert in alerts %}
+            <tr>
+                <td><strong>{{ alert[0] }}</strong></td>
+                <td class="{{ alert[1] }}">{{ alert[1] }}</td>
+                <td>{{ alert[2] }}</td>
+                <td>{{ alert[3] }}</td>
+                <td>{{ alert[4] }}</td>
+                <td style="font-size: 11px; color: #8892b0;">{{ alert[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
