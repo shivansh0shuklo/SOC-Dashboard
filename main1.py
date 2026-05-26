@@ -55,11 +55,17 @@ class FileGuard:
                     self.send_alert_to_server("MODIFICATION", re_calc, 'File Was Changed', 'CRITICAL', f"{self.file_path}")
                     self.baseline = re_calc
                 else:
-                    print("checking.....[Status: Secure] [ok]", end='\r')   
+                    print("checking.....[Secure] [ok]", end='\r')   
             except FileNotFoundError:
                 print(f"\n[CRITICAL] Alert: {self.file_path} has been Deleted!")
                 self.send_alert_to_server("DELETION", None, 'File is Removed!', 'CRITICAL', f'{self.file_path}')
                 self.baseline = None
+            except PermissionError:
+                print(f"\n[critical] alert: {self.file_path} perms denied")
+                self.send_alert_to_server("DENIED",None,"file perms is changed!","REVIEW", f'{self.file_path}')
+            except KeyboardInterrupt:
+                print("keybord intrupted! [stopping]")
+                break
 path_to_check = "abc.txt"
 guard = FileGuard(path_to_check)
 guard.monitor()
