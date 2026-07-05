@@ -26,14 +26,14 @@ treading,
 * kepping track of the project
 
 #How Does It Work?
-[ Target Server / Endpoint ] 
+*[ Target Server / Endpoint ] 
       │ 
       ├──> Cryptographic FIM Daemon (Multi-threaded File Hashing)
       └──> Outbound Network Handler (Low-level TCP Sockets)
                  │
                  ▼  [ Secure Socket Pipe (Port Isolation) ]
                  │
-[ Central Operations Framework ]
+*[ Central Operations Framework ]
       │
       ├──> Telemetry Ingestion Engine
       ├──> PostgreSQL Database (Granular Incident Logging)
