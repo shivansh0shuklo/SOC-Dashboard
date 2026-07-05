@@ -1,26 +1,43 @@
 # SOC DASHBOARD
-my first pyhton project completed in 3 months 
+FileGuard | Host-Based Real-Time Threat Detection System (HIDS)
 
 # Topics learned -->
-flask
-low level tcp client-server sockets
-socket programing
-postgreSQL(database pipelines&management)
-port isolation concept
-html
-cryptographic file fingerprinting
-treading
+flask,
+low level tcp client-server sockets,
+socket programing,
+postgreSQL(database pipelines&management),
+port isolation concept,
+html,
+cryptographic file fingerprinting,
+treading,
 
 # Tech Used --> 
-os - Arch Linux
-language - Python(flask,core logic)
-databse - postgreSQL
-libraries - psycopg,hashlib,socket,flask,threading,json
+1. Languages & Frameworks: Python, Flask, HTML
+
+2. Networking & Concurrency: Low-level TCP Sockets, Multi-threading (threading), Port Isolation Mechanics
+
+3. Database & Storage: PostgreSQL (Optimized Database Pipelines & Log Management)
+
+4. Security Engine Logic: Cryptographic File Fingerprinting (Hashing Architecture)
 
 # Usage Of AI -->
-In style block of index.html
-preparing the road map
-kepping track of the project
+* In style block of index.html
+* preparing the road map
+* kepping track of the project
+
+#How Does It Work?
+[ Target Server / Endpoint ] 
+      │ 
+      ├──> Cryptographic FIM Daemon (Multi-threaded File Hashing)
+      └──> Outbound Network Handler (Low-level TCP Sockets)
+                 │
+                 ▼  [ Secure Socket Pipe (Port Isolation) ]
+                 │
+[ Central Operations Framework ]
+      │
+      ├──> Telemetry Ingestion Engine
+      ├──> PostgreSQL Database (Granular Incident Logging)
+      └──> Flask Web Engine ──> [ Live SOC Dashboard UI ]
 
 # How To Initialize -->
 # steps -->
