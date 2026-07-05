@@ -2,14 +2,14 @@
 FileGuard | Host-Based Real-Time Threat Detection System (HIDS)
 
 ## Topics learned -->
-*Flask
-*Low level tcp client-server sockets
-*Socket programing
-*PostgreSQL(database pipelines&management)
-*Port isolation concept
-*Html
-*Cryptographic file fingerprinting
-*Treading
+* Flask
+* Low level tcp client-server sockets
+* Socket programing
+* PostgreSQL(database pipelines&management)
+* Port isolation concept
+* Html
+* Cryptographic file fingerprinting
+* Treading
 
 ## Tech Used --> 
 1. Languages & Frameworks: Python, Flask, HTML
