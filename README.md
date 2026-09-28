@@ -27,6 +27,7 @@ FileGuard | Host-Based Real-Time Threat Detection System (HIDS)
 
 # How To Initialize -->
 ## steps -->
+# you can directly start from step 2 
 
 1.  sudo systemctl start postgresql
     psql -U shivansh -d soc_dashboard -f schema.sql
@@ -38,7 +39,7 @@ FileGuard | Host-Based Real-Time Threat Detection System (HIDS)
 
 4.  cd flask && python myapp.py
 
-5.  Open http://127.0.0.1:5000
+5.  Open http://127.0.0.1:5555
 
 
 ## System Architecture Overview
