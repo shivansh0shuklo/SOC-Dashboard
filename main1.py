@@ -9,6 +9,7 @@ class FileGuard:
     port = 5555
     addr = (ip,port)
     def __init__(self,file_path):
+        self.last_state = "ok"
         self.file_path = file_path##location  of the file assingned to watched
         self.baseline = self.calculate_hash()
         if(self.baseline):
@@ -50,22 +51,31 @@ class FileGuard:
                 re_calc = self.calculate_hash()
                 if re_calc is None:
                     raise FileNotFoundError
+                
                 if re_calc != self.baseline:
-                    print("[change is detected..]\n[logging it..]")
-                    self.send_alert_to_server("MODIFICATION", re_calc, 'File Was Changed', 'CRITICAL', f"{self.file_path}")
+                    if(self.last_state != "modified"):
+                        print("[change is detected..]\n[logging it..]")
+                        self.send_alert_to_server("MODIFICATION", re_calc, 'File Was Changed', 'CRITICAL', f"{self.file_path}")
+                        self.last_state  = "modified"
                     self.baseline = re_calc
                 else:
+                    if(self.last_state != "ok"):
+                        self.last_state = "ok"
                     print("checking.....[Secure] [ok]", end='\r')   
             except FileNotFoundError:
-                print(f"\n[CRITICAL] Alert: {self.file_path} has been Deleted!")
-                self.send_alert_to_server("DELETION", None, 'File is Removed!', 'CRITICAL', f'{self.file_path}')
+                if(self.last_state != "missing"):
+                    print(f"\n[CRITICAL] Alert: {self.file_path} has been Deleted!")
+                    self.send_alert_to_server("DELETION", None, 'File is Removed!', 'CRITICAL', f'{self.file_path}')
+                    self.last_state = "missing"
                 self.baseline = None
             except PermissionError:
-                print(f"\n[critical] alert: {self.file_path} perms denied")
-                self.send_alert_to_server("DENIED",None,"file perms is changed!","REVIEW", f'{self.file_path}')
+                if(self.last_state != "denied"):
+                    print(f"\n[critical] alert: {self.file_path} perms denied")
+                    self.last_state = "denied"
+                    self.send_alert_to_server("DENIED",None,"file perms is changed!","REVIEW", f'{self.file_path}')
             except KeyboardInterrupt:
                 print("keybord intrupted! [stopping]")
-                break
+                break            
 path_to_check = "abc.txt"
 guard = FileGuard(path_to_check)
 guard.monitor()
